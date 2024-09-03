@@ -1,13 +1,38 @@
 package com.muhammet.stoktakipotomasyon.controller;
 
+import com.muhammet.stoktakipotomasyon.dto.request.AddModelRequestDto;
+import com.muhammet.stoktakipotomasyon.dto.response.ResponseDto;
+import com.muhammet.stoktakipotomasyon.entity.Model;
 import com.muhammet.stoktakipotomasyon.service.ModelService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/")
 @RequiredArgsConstructor
+@CrossOrigin("*")
 public class ModelController {
     private final ModelService modelService;
+
+    @PostMapping("/add-model")
+    public ResponseEntity<ResponseDto<Boolean>> addModel(@RequestBody AddModelRequestDto dto){
+        modelService.save(Model.builder().markaId(dto.markaId()).modelAdi(dto.modelAdi()).build());
+        return ResponseEntity.ok(ResponseDto.<Boolean>builder()
+                .code(200)
+                .message("Model Eklendi")
+                .data(true).build());
+    }
+
+    @GetMapping("/get-all")
+    public ResponseEntity<ResponseDto<List<Model>>> getAll(){
+        return  ResponseEntity.ok(ResponseDto.<List<Model>>builder()
+                        .code(200)
+                        .message("Ok")
+                        .data(modelService.findAll())
+                .build());
+    }
+
 }

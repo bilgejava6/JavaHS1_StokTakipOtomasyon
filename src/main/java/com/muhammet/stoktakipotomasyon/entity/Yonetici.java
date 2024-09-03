@@ -21,7 +21,7 @@ public class Yonetici {
     String telefon;
     String email;
     String userName;
-    String passord;
+    String password;
     @Enumerated
     State state;
     Long rolId;
