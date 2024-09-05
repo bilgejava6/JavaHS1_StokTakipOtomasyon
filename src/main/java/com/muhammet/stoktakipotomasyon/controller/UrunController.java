@@ -6,9 +6,10 @@ import com.muhammet.stoktakipotomasyon.entity.Urun;
 import com.muhammet.stoktakipotomasyon.service.UrunService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/urun")
@@ -65,6 +66,50 @@ public class UrunController {
                         .code(200)
                         .message("Ürünler listelendi.")
                         .data(urunService.findAllByMarkaAdi(markaAdi,pageNumber,pageSize))
+                .build());
+    }
+
+    @GetMapping("/get-all-from-model-id")
+    public ResponseEntity<ResponseDto<Page<Urun>>> getUrunListFromModelId(Long modelId, Integer pageNumber, Integer pageSize){
+        return ResponseEntity.ok(ResponseDto.<Page<Urun>>builder()
+                .code(200)
+                .message("Ürünler listelendi.")
+                .data(urunService.findAllByModelId(modelId,pageNumber,pageSize))
+                .build());
+    }
+
+    @GetMapping("/get-all-by-urun-adi")
+    public ResponseEntity<ResponseDto<Page<Urun>>> getAllByUrunAdi(String urunAdi, Integer pageNumber, Integer pageSize){
+        return ResponseEntity.ok(ResponseDto.<Page<Urun>>builder()
+                .code(200)
+                .message("Ürünler listelendi.")
+                .data(urunService.findAllByUrunAdi(urunAdi,pageNumber,pageSize))
+                .build());
+    }
+
+    @GetMapping("/get-all-by-fiyat-between")
+    public ResponseEntity<ResponseDto<Page<Urun>>> findAllByFiyatBetween(Double start,Double end,Integer pageNumber, Integer pageSize){
+        return ResponseEntity.ok(ResponseDto.<Page<Urun>>builder()
+                .code(200)
+                .message("Ürünler listelendi.")
+                .data(urunService.findAllByFiyatBetween(start,end,pageNumber,pageSize))
+                .build());
+    }
+    @GetMapping("/get-all-stok-azalan")
+    public ResponseEntity<ResponseDto<Page<Urun>>> getAllStokuAzalanlar(Integer kritikSeviye, Integer pageNumber, Integer pageSize){
+        return ResponseEntity.ok(ResponseDto.<Page<Urun>>builder()
+                .code(200)
+                .message("Ürünler listelendi.")
+                .data(urunService.findAllByStokAdediLessThanEqual(kritikSeviye,pageNumber,pageSize))
+                .build());
+    }
+
+    @GetMapping("/get-all")
+    public ResponseEntity<ResponseDto<List<Urun>>> getAllUrunList(){
+        return ResponseEntity.ok(ResponseDto.<List<Urun>>builder()
+                .code(200)
+                .message("Ürünler listelendi.")
+                .data(urunService.findAll())
                 .build());
     }
 }
