@@ -2,7 +2,7 @@ import LeftMenu from "../../components/organisms/LeftMenu";
 import IMarka from "../../models/IMarka";
 import {depoGlobalDispatch, useDepoSelector} from "../../store";
 import {useEffect, useState} from "react";
-import {fetchMarkaEkle, fetchMarkaListele, fetchMarkaSil} from "../../store/feature/markaSlice";
+import {fetchMarkaEdit, fetchMarkaEkle, fetchMarkaListele, fetchMarkaSil} from "../../store/feature/markaSlice";
 import {useDispatch} from "react-redux";
 import swal from "sweetalert";
 function Marka(){
@@ -12,6 +12,15 @@ function Marka(){
     const [acikAdres,setAcikAdres] = useState('');
     const [yetkili,setYetkili] = useState('');
     const [iletisimTel,setIletisimTel] = useState('');
+
+    const [editMarka,setEditMarka] = useState<IMarka>({
+        id: 0,
+        ad: '',
+        aciklama: '',
+        acikAdres: '',
+        yetkili: '',
+        iletisimTel: '',
+    });
 
     const markaList: IMarka[] = useDepoSelector(state=> state.marka.markaList);
     useEffect(()=>{
@@ -68,9 +77,117 @@ function Marka(){
      if(marka.id)
         deleteMarka(marka.id);
      */
+
+    const editMarkaSec=(marka: IMarka)=>{
+        setEditMarka(marka);
+    }
+
+    const editMarkaAction = ()=>{
+        if(editMarka.aciklama!=='' && editMarka.acikAdres!=='' && editMarka.yetkili!=='' && editMarka.ad!==''){
+            dispatch(fetchMarkaEdit(editMarka)).then(()=>{
+                swal('DÜZENLEME İŞLEMİ','Düzenleme başarı ile tamamlandı', 'success').then(()=>{
+                    dispatch(fetchMarkaListele());
+                    setEditMarka({
+                        id: 0,
+                        ad: '',
+                        aciklama: '',
+                        acikAdres: '',
+                        yetkili: '',
+                        iletisimTel: '',
+                    })
+                })
+            })
+        }
+
+    }
+
+    /***
+
+     Musteri musteri = new Musteri();
+     //musteri.ad = 4;
+     musteri.setAd(3);
+     musteri = new Musteri('','',44,323);
+     {
+         id: 4,
+         ad: 'Ahmet',
+         adres: 'Ankara'
+     }
+     .....
+     {
+         id: 4,
+         ad: 'Ahmet',
+         adres: 'Ankara',
+         ad: 'Demet TAŞ
+     }
+     result
+     {
+         id: 4,
+         adres: 'Ankara',
+         ad: 'Demet TAŞ
+     }
+     */
+
     return(
         <div className='hold-transition sidebar-mini'>
             <div className="wrapper">
+
+                <div className='modal fade' id='edit-modal' style={{display: 'none'}} aria-modal={true} role='dialog'>
+                    <div className='modal-dialog modal-lg'>
+                        <div className='modal-content'>
+                            <div className='modal-header'>
+                                Marka Düzenleme Ekranı
+                            </div>
+                            <div className='modal-body'>
+                                <div className='form-group'>
+                                    <label>Marka adı</label>
+                                    <input value={editMarka.ad}
+                                           onChange={evt => setEditMarka({...editMarka,ad: evt.target.value})} type="text"
+                                           className='form-control'
+                                           placeholder='marka adı giriniz.'/>
+                                </div>
+                                <div className='form-group'>
+                                    <label>Aciklama</label>
+                                    <input value={editMarka.aciklama}
+                                           onChange={evt => setEditMarka({...editMarka,aciklama: evt.target.value})} type="text"
+                                           className='form-control'
+                                           placeholder='açıklama giriniz.'/>
+                                </div>
+                                <div className='form-group'>
+                                    <label>Firma Yetkilisi</label>
+                                    <input value={editMarka.yetkili}
+                                           onChange={evt => setEditMarka({...editMarka,yetkili: evt.target.value})} type="text"
+                                           className='form-control'
+                                           placeholder='yetkili personel ad soyadını giriniz'/>
+                                </div>
+                                <div className='form-group'>
+                                    <label>İletişim Telefonu</label>
+                                    <div className='input-group'>
+                                        <div className='input-group-prepend'>
+                                                        <span className='input-group-text'>
+                                                            <i className="fa-solid fa-square-phone"></i>
+                                                        </span>
+                                        </div>
+                                        <input value={editMarka.iletisimTel}
+                                               onChange={evt => setEditMarka({...editMarka,iletisimTel: evt.target.value})}
+                                               type="text" className='form-control'
+                                               placeholder='telefon numarası giriniz.'/>
+                                    </div>
+
+                                </div>
+                                <div className='form-group'>
+                                    <label>Firma Açık Adresi</label>
+                                    <textarea value={editMarka.acikAdres}
+                                              onChange={evt => setEditMarka({...editMarka,acikAdres: evt.target.value})}
+                                              rows={4} className='form-control'
+                                              placeholder='açık adres bilgisini giriniz'/>
+                                </div>
+                                <div className='form-group'>
+                                    <button data-dismiss='modal' onClick={editMarkaAction} className='btn btn-block btn-primary'>Düzenle & Kaydet</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <nav className="main-header navbar navbar-expand navbar-white navbar-light">
 
@@ -312,7 +429,9 @@ function Marka(){
                                                                     }} className='btn bg-danger p-2 m-1'>
                                                                         <i className="fa-solid fa-eraser fa-lg"></i>
                                                                     </a>
-                                                                    <a className='btn  bg-warning p-2 m-1'>
+                                                                    <a onClick={()=>{
+                                                                        editMarkaSec(marka)
+                                                                    }} data-toggle='modal' data-target='#edit-modal' className='btn  bg-warning p-2 m-1'>
                                                                         <i className="fa-solid fa-pen-to-square fa-lg"></i>
                                                                     </a>
                                                                 </td>
