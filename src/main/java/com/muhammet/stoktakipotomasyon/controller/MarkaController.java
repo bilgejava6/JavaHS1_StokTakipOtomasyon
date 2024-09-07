@@ -40,4 +40,14 @@ public class MarkaController {
                     .data(markaService.findAll())
                 .build());
     }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<ResponseDto<Boolean>> deleteById(Long id){
+        markaService.deleteById(id);
+        return ResponseEntity.ok(ResponseDto.<Boolean>builder()
+                .code(200)
+                .message("Ok")
+                .data(true)
+                .build());
+    }
 }

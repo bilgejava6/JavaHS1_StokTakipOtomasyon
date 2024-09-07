@@ -2,9 +2,9 @@ import LeftMenu from "../../components/organisms/LeftMenu";
 import IMarka from "../../models/IMarka";
 import {depoGlobalDispatch, useDepoSelector} from "../../store";
 import {useEffect, useState} from "react";
-import {fetchMarkaEkle, fetchMarkaListele} from "../../store/feature/markaSlice";
+import {fetchMarkaEkle, fetchMarkaListele, fetchMarkaSil} from "../../store/feature/markaSlice";
 import {useDispatch} from "react-redux";
-
+import swal from "sweetalert";
 function Marka(){
     const dispatch: depoGlobalDispatch = useDispatch();
     const [ad,setAd] = useState('');
@@ -18,10 +18,56 @@ function Marka(){
        dispatch(fetchMarkaListele());
     },[]);
     const addMarka = ()=>{
-        dispatch(fetchMarkaEkle({ad, aciklama,acikAdres,yetkili,iletisimTel })).then(()=>{
-            dispatch(fetchMarkaListele());
+        if(ad!=='' && yetkili!=='' && aciklama!=='' && acikAdres!=='' && iletisimTel!==''){
+            dispatch(fetchMarkaEkle({ad, aciklama,acikAdres,yetkili,iletisimTel })).then(()=>{
+                swal('KAYIT İŞLEMİ','Kayıt başarı ile tamamlandı', 'success').then(()=>{
+                    dispatch(fetchMarkaListele());
+                    setAd('');
+                    setAcikAdres('');
+                    setAciklama('');
+                    setIletisimTel('');
+                    setYetkili('');
+                })
+
+            })
+        }else{
+            swal('UYARI!','Tüm alanları doldurmanız gerekmektedir','error');
+        }
+
+    }
+    const deleteMarka = (id: number)=>{
+        swal({
+            title: 'UYARI!',
+            text: 'Seçtiğiniz kayıt silinmek üzere onaylıyor musunuz?',
+            icon: 'error',
+            buttons: ['İptal', 'Sil'],
+            dangerMode: true
+        }).then(onay=>{
+            if(onay){
+                dispatch(fetchMarkaSil(id)).then(()=>{
+                    swal('SİLME İŞLEMİ','kayıt başarı ile silindi','success');
+                    dispatch(fetchMarkaListele());
+                })
+
+            }else{
+                swal('İPTAL','İşlem İptal Edildi','success');
+            }
         })
     }
+    /***
+     DİKKAT!!!
+     eğer bir event içerisine arrowfunction ekliyor iseniz ve function ın parametre alması gerekmiyor ise
+     adını direkt yazabilirsiniz.
+      -> onClick={addMarka}
+     ancak eğer errorfunction bir değer talep ediyor ise onu function parantezleri ile çağırın.
+     -> onClick={deleteMarka(3)} // bu kullanım yanlış hata verir.
+     -> onClick={()=>{
+         deleteMarka(3);
+     }}
+     Eğer bir değer, optional ise yani ? ile tanımlanmış ise önce onun varlığını kontrol etmelisiniz.
+     if(marka.id)
+        deleteMarka(marka.id);
+     */
     return(
         <div className='hold-transition sidebar-mini'>
             <div className="wrapper">
@@ -192,17 +238,17 @@ function Marka(){
                                         <div className='card-body'>
                                             <div className='form-group'>
                                                 <label>Marka adı</label>
-                                                <input onChange={evt=> setAd(evt.target.value)} type="text" className='form-control'
+                                                <input  value={ad} onChange={evt=> setAd(evt.target.value)} type="text" className='form-control'
                                                        placeholder='marka adı giriniz.'/>
                                             </div>
                                             <div className='form-group'>
                                                 <label>Aciklama</label>
-                                                <input onChange={evt=> setAciklama(evt.target.value)}  type="text" className='form-control'
+                                                <input value={aciklama} onChange={evt=> setAciklama(evt.target.value)}  type="text" className='form-control'
                                                        placeholder='açıklama giriniz.'/>
                                             </div>
                                             <div className='form-group'>
                                                 <label>Firma Yetkilisi</label>
-                                                <input onChange={evt=> setYetkili(evt.target.value)}  type="text" className='form-control'
+                                                <input value={yetkili} onChange={evt=> setYetkili(evt.target.value)}  type="text" className='form-control'
                                                        placeholder='yetkili personel ad soyadını giriniz'/>
                                             </div>
                                             <div className='form-group'>
@@ -213,14 +259,14 @@ function Marka(){
                                                             <i className="fa-solid fa-square-phone"></i>
                                                         </span>
                                                     </div>
-                                                    <input onChange={evt=> setIletisimTel(evt.target.value)}  type="text" className='form-control'
+                                                    <input value={iletisimTel} onChange={evt=> setIletisimTel(evt.target.value)}  type="text" className='form-control'
                                                            placeholder='telefon numarası giriniz.'/>
                                                 </div>
 
                                             </div>
                                             <div className='form-group'>
                                                 <label>Firma Açık Adresi</label>
-                                                <textarea onChange={evt=> setAcikAdres(evt.target.value)}  rows={4} className='form-control'
+                                                <textarea value={acikAdres} onChange={evt=> setAcikAdres(evt.target.value)}  rows={4} className='form-control'
                                                           placeholder='açık adres bilgisini giriniz'/>
                                             </div>
                                             <div className='form-group'>
@@ -238,7 +284,8 @@ function Marka(){
                                                 <table className='table table-hover table-bordered'>
                                                     <thead className='bg-gradient-gray-dark'>
                                                         <tr>
-                                                            <th>Id</th>
+                                                            <td>No</td>
+                                                            <th>M.Id</th>
                                                             <th>Ad</th>
                                                             <th>Aciklama</th>
                                                             <th>Yetkili</th>
@@ -250,7 +297,8 @@ function Marka(){
                                                     <tbody>
                                                     {
                                                         markaList.map((marka,index)=> {
-                                                            return <tr>
+                                                            return <tr key={index}>
+                                                                <td>{index+1}</td>
                                                                 <td>{marka.id}</td>
                                                                 <td>{marka.ad}</td>
                                                                 <td>{marka.aciklama}</td>
@@ -258,7 +306,10 @@ function Marka(){
                                                                 <td>{marka.iletisimTel}</td>
                                                                 <td>{marka.acikAdres}</td>
                                                                 <td>
-                                                                    <a className='btn bg-danger p-2 m-1'>
+                                                                    <a onClick={()=>{
+                                                                        if(marka.id)
+                                                                            deleteMarka(marka.id)
+                                                                    }} className='btn bg-danger p-2 m-1'>
                                                                         <i className="fa-solid fa-eraser fa-lg"></i>
                                                                     </a>
                                                                     <a className='btn  bg-warning p-2 m-1'>

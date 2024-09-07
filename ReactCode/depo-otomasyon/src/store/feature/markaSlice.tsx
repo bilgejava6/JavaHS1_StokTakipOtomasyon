@@ -28,6 +28,21 @@ export const fetchMarkaListele = createAsyncThunk(
     }
 )
 
+export const fetchMarkaSil = createAsyncThunk(
+    'marka/fetchMarkaSil',
+    async (markaId: number)=>{
+        const response = await  fetch(
+            'http://localhost:9090/marka/delete?id='+markaId,
+            {
+                method: 'DELETE',
+                headers:{
+                    'Content-Type': 'application/json'
+                }
+            }
+        ).then(data=>data.json())
+        return response;
+    }
+)
 
 const markaSlice = createSlice({
     name: 'marka',
