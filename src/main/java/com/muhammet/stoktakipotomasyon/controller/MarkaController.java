@@ -1,6 +1,7 @@
 package com.muhammet.stoktakipotomasyon.controller;
 
 import com.muhammet.stoktakipotomasyon.dto.request.AddMarkaRequestDto;
+import com.muhammet.stoktakipotomasyon.dto.request.AddUrunRequestDto;
 import com.muhammet.stoktakipotomasyon.dto.response.ResponseDto;
 import com.muhammet.stoktakipotomasyon.entity.Marka;
 import com.muhammet.stoktakipotomasyon.service.MarkaService;
@@ -48,6 +49,16 @@ public class MarkaController {
                 .code(200)
                 .message("Ok")
                 .data(true)
+                .build());
+    }
+
+    @PostMapping("edit-marka")
+    public ResponseEntity<ResponseDto<Boolean>> editMarka(@RequestBody AddMarkaRequestDto dto){
+        markaService.editMarka(dto);
+        return  ResponseEntity.ok(ResponseDto.<Boolean>builder()
+                        .data(true)
+                        .message("Ok")
+                        .code(200)
                 .build());
     }
 }

@@ -44,6 +44,22 @@ export const fetchMarkaSil = createAsyncThunk(
     }
 )
 
+export const fetchMarkaEdit = createAsyncThunk(
+    'marka/fetchMarkaEdit',
+    async (payload: IMarka)=>{
+        const response = await fetch(
+            'http://localhost:9090/marka/edit-marka',{
+                method: 'POST',
+                headers:{
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            }
+        ).then(data=>data.json())
+        return response;
+    }
+)
+
 const markaSlice = createSlice({
     name: 'marka',
     initialState: initialStateMarka,
