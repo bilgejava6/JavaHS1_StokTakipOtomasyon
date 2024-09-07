@@ -3,6 +3,8 @@ import Home from "./pages/Home/Home";
 import Login from "./pages/Login/Login";
 import Register from "./pages/Register/Register";
 import {useDepoSelector} from "./store";
+import React from "react";
+import Marka from "./pages/Marka/Marka";
 function Routerpages(){
     //const token = localStorage.getItem('token');
     const token = sessionStorage.getItem("token");
@@ -13,6 +15,7 @@ function Routerpages(){
                 <Route path='/' element={isLogin || token!== null ? <Home /> : <Login />}/>
                 <Route path='/login' element={<Login />} />
                 <Route path='/register' element={<Register />} />
+                <Route path='/marka-tanimlama' element={isLogin || token!== null ? <Marka /> : <Login /> } />
             </Routes>
         </BrowserRouter>
     );
