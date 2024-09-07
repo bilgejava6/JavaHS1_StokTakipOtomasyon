@@ -1,12 +1,13 @@
 import {configureStore} from "@reduxjs/toolkit";
 import {
-    authSlice
+    authSlice, markaSlice
 } from './feature';
 import {useSelector} from "react-redux";
 
 const store = configureStore({
     reducer: {
-        auth: authSlice
+        auth: authSlice,
+        marka: markaSlice,
     }
 });
 

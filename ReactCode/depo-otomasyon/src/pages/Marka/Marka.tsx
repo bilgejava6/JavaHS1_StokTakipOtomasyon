@@ -1,6 +1,27 @@
 import LeftMenu from "../../components/organisms/LeftMenu";
+import IMarka from "../../models/IMarka";
+import {depoGlobalDispatch, useDepoSelector} from "../../store";
+import {useEffect, useState} from "react";
+import {fetchMarkaEkle, fetchMarkaListele} from "../../store/feature/markaSlice";
+import {useDispatch} from "react-redux";
 
 function Marka(){
+    const dispatch: depoGlobalDispatch = useDispatch();
+    const [ad,setAd] = useState('');
+    const [aciklama,setAciklama] = useState('');
+    const [acikAdres,setAcikAdres] = useState('');
+    const [yetkili,setYetkili] = useState('');
+    const [iletisimTel,setIletisimTel] = useState('');
+
+    const markaList: IMarka[] = useDepoSelector(state=> state.marka.markaList);
+    useEffect(()=>{
+       dispatch(fetchMarkaListele());
+    },[]);
+    const addMarka = ()=>{
+        dispatch(fetchMarkaEkle({ad, aciklama,acikAdres,yetkili,iletisimTel })).then(()=>{
+            dispatch(fetchMarkaListele());
+        })
+    }
     return(
         <div className='hold-transition sidebar-mini'>
             <div className="wrapper">
@@ -171,17 +192,17 @@ function Marka(){
                                         <div className='card-body'>
                                             <div className='form-group'>
                                                 <label>Marka adı</label>
-                                                <input type="text" className='form-control'
+                                                <input onChange={evt=> setAd(evt.target.value)} type="text" className='form-control'
                                                        placeholder='marka adı giriniz.'/>
                                             </div>
                                             <div className='form-group'>
                                                 <label>Aciklama</label>
-                                                <input type="text" className='form-control'
+                                                <input onChange={evt=> setAciklama(evt.target.value)}  type="text" className='form-control'
                                                        placeholder='açıklama giriniz.'/>
                                             </div>
                                             <div className='form-group'>
                                                 <label>Firma Yetkilisi</label>
-                                                <input type="text" className='form-control'
+                                                <input onChange={evt=> setYetkili(evt.target.value)}  type="text" className='form-control'
                                                        placeholder='yetkili personel ad soyadını giriniz'/>
                                             </div>
                                             <div className='form-group'>
@@ -192,18 +213,18 @@ function Marka(){
                                                             <i className="fa-solid fa-square-phone"></i>
                                                         </span>
                                                     </div>
-                                                    <input type="text" className='form-control'
+                                                    <input onChange={evt=> setIletisimTel(evt.target.value)}  type="text" className='form-control'
                                                            placeholder='telefon numarası giriniz.'/>
                                                 </div>
 
                                             </div>
                                             <div className='form-group'>
                                                 <label>Firma Açık Adresi</label>
-                                                <textarea rows={4} className='form-control'
+                                                <textarea onChange={evt=> setAcikAdres(evt.target.value)}  rows={4} className='form-control'
                                                           placeholder='açık adres bilgisini giriniz'/>
                                             </div>
                                             <div className='form-group'>
-                                                <button className='btn btn-block btn-primary'>Kaydet</button>
+                                                <button onClick={addMarka} className='btn btn-block btn-primary'>Kaydet</button>
                                             </div>
                                         </div>
                                     </div>
@@ -227,22 +248,27 @@ function Marka(){
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr>
-                                                            <td>1</td>
-                                                            <td>Asus</td>
-                                                            <td>Anakart ve Ekrankartı üretici firması</td>
-                                                            <td>Ali BEY</td>
-                                                            <td>0 312 999 99 99</td>
-                                                            <td>Ankara - Merkez</td>
-                                                            <td>
-                                                                <a className='btn bg-danger p-2 m-1' >
-                                                                    <i className="fa-solid fa-eraser fa-lg"></i>
-                                                                </a>
-                                                                <a className='btn  bg-warning p-2 m-1'>
-                                                                    <i className="fa-solid fa-pen-to-square fa-lg"></i>
-                                                                </a>
-                                                            </td>
-                                                        </tr>
+                                                    {
+                                                        markaList.map((marka,index)=> {
+                                                            return <tr>
+                                                                <td>{marka.id}</td>
+                                                                <td>{marka.ad}</td>
+                                                                <td>{marka.aciklama}</td>
+                                                                <td>{marka.yetkili}</td>
+                                                                <td>{marka.iletisimTel}</td>
+                                                                <td>{marka.acikAdres}</td>
+                                                                <td>
+                                                                    <a className='btn bg-danger p-2 m-1'>
+                                                                        <i className="fa-solid fa-eraser fa-lg"></i>
+                                                                    </a>
+                                                                    <a className='btn  bg-warning p-2 m-1'>
+                                                                        <i className="fa-solid fa-pen-to-square fa-lg"></i>
+                                                                    </a>
+                                                                </td>
+                                                            </tr>
+                                                        })
+                                                    }
+
                                                     </tbody>
                                                 </table>
                                             </div>
