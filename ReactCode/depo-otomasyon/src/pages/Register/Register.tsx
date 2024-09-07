@@ -1,5 +1,37 @@
-
+import {useState} from "react";
+import {fetchRegister} from "../../store/feature/authSlice";
+import {useDispatch} from "react-redux";
+import {depoGlobalDispatch} from "../../store";
+import swal from "sweetalert";
+import {useNavigate} from 'react-router-dom';
 function Register(){
+    const dispatch: depoGlobalDispatch  = useDispatch();
+    /**
+     * DİKKAT!!!!!
+     * sayfalar arasında geçiş için, rect-router-dom kullanılacaktır. çünkü bizim navigasyon işlemlerimizi
+     * o yönetmektedir. Bu nedenle useNavigate ile sayfalar arası geçişi sağlayacağız.
+     * */
+    const navigate = useNavigate();
+
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [userName, setUsername] = useState('');
+    const register = ()=>{
+        // fetchRegister({
+        //     userName: userName,
+        //     password: password,
+        //     email: email
+        // })
+        // DİKKAT!!! Eğer key değeri ile value değişken adı aynı ise tekrar yazılmasına gerek yoktur.
+       dispatch(fetchRegister({userName,email,password})).then(()=>{
+           swal('Üyelik İşlemi','Kayıt başarı ile tamamlanmıştır','success').then(()=>{
+               navigate('/login');
+           })
+       })
+        // Burada userName  değişkeninin adı fetch işleminde talep edilen key değerini ifade eder, değişkenin value ise gönderilmek
+        // istenilen değeri ifade eder.
+    }
     return(
         <div className='hold-transition register-page'>
             <div className="register-box">
@@ -12,7 +44,7 @@ function Register(){
 
 
                         <div className="input-group mb-3">
-                            <input type="text" className="form-control" placeholder="Full name"/>
+                            <input onChange={evt=> setUsername(evt.target.value)} type="text" className="form-control" placeholder="User Name"/>
                             <div className="input-group-append">
                                 <div className="input-group-text">
                                     <span className="fas fa-user"></span>
@@ -20,7 +52,7 @@ function Register(){
                             </div>
                         </div>
                         <div className="input-group mb-3">
-                            <input type="email" className="form-control" placeholder="Email"/>
+                            <input onChange={evt=> setEmail(evt.target.value)} type="email" className="form-control" placeholder="Email"/>
                             <div className="input-group-append">
                                 <div className="input-group-text">
                                     <span className="fas fa-envelope"></span>
@@ -28,7 +60,7 @@ function Register(){
                             </div>
                         </div>
                         <div className="input-group mb-3">
-                            <input type="password" className="form-control" placeholder="Password"/>
+                            <input onChange={evt=> setPassword(evt.target.value)} type="password" className="form-control" placeholder="Password"/>
                             <div className="input-group-append">
                                 <div className="input-group-text">
                                     <span className="fas fa-lock"></span>
@@ -36,7 +68,7 @@ function Register(){
                             </div>
                         </div>
                         <div className="input-group mb-3">
-                            <input type="password" className="form-control" placeholder="Retype password"/>
+                            <input onChange={evt=> setConfirmPassword(evt.target.value)} type="password" className="form-control" placeholder="Retype password"/>
                             <div className="input-group-append">
                                 <div className="input-group-text">
                                     <span className="fas fa-lock"></span>
@@ -54,7 +86,7 @@ function Register(){
                             </div>
 
                             <div className="col-4">
-                                <button type="submit" className="btn btn-primary btn-block">Register</button>
+                                <button onClick={register} type="submit" className="btn btn-primary btn-block">Register</button>
                             </div>
 
                         </div>
@@ -71,7 +103,7 @@ function Register(){
                             </a>
                         </div>
 
-                        <a href="login.html" className="text-center">I already have a membership</a>
+                        <a href="/login" className="text-center">I already have a membership</a>
                     </div>
 
                 </div>

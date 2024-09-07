@@ -2,6 +2,7 @@ package com.muhammet.stoktakipotomasyon.controller;
 
 import com.muhammet.stoktakipotomasyon.dto.request.AddYoneticiRequestDto;
 import com.muhammet.stoktakipotomasyon.dto.request.DoLoginRequestDto;
+import com.muhammet.stoktakipotomasyon.dto.request.RegisterRequestDto;
 import com.muhammet.stoktakipotomasyon.dto.response.LoginResponseDto;
 import com.muhammet.stoktakipotomasyon.dto.response.ResponseDto;
 import com.muhammet.stoktakipotomasyon.entity.State;
@@ -57,5 +58,17 @@ public class YoneticiController {
                         .message("Giriş yapıldı")
                         .data(new LoginResponseDto(token))
                 .build());
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<ResponseDto<Boolean>> register(@RequestBody RegisterRequestDto dto){
+        yoneticiService.register(dto);
+        return ResponseEntity.ok(
+                ResponseDto.<Boolean>builder()
+                        .code(200)
+                        .message("Üyelik Başarıyla eklendi")
+                        .data(true)
+                        .build()
+        );
     }
 }

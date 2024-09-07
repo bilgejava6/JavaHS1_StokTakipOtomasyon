@@ -2,7 +2,9 @@ package com.muhammet.stoktakipotomasyon.service;
 
 import com.muhammet.stoktakipotomasyon.config.JwtManager;
 import com.muhammet.stoktakipotomasyon.dto.request.DoLoginRequestDto;
+import com.muhammet.stoktakipotomasyon.dto.request.RegisterRequestDto;
 import com.muhammet.stoktakipotomasyon.dto.response.LoginResponseDto;
+import com.muhammet.stoktakipotomasyon.entity.State;
 import com.muhammet.stoktakipotomasyon.entity.Yonetici;
 import com.muhammet.stoktakipotomasyon.exceptions.ErrorType;
 import com.muhammet.stoktakipotomasyon.exceptions.StokTakipException;
@@ -30,5 +32,15 @@ public class YoneticiService  extends ServiceManager<Yonetici,Long> {
        if(yoneticiOptional.isEmpty()) throw new StokTakipException(ErrorType.BAD_REQUEST_USERNAME_OR_PASSWORD_ERROR);
        Yonetici yonetici = yoneticiOptional.get();
        return jwtManager.createToken(yonetici.getId());
+    }
+
+    public void register(RegisterRequestDto dto) {
+        yoneticiRepository.save(Yonetici.builder()
+                        .userName(dto.userName())
+                        .email(dto.email())
+                        .password(dto.password())
+                        .state(State.BEKLEMEDI)
+                        .rolId(0L)
+                .build());
     }
 }

@@ -2,13 +2,17 @@ import {useState} from "react";
 import {fetchDoLogin} from "../../store/feature/authSlice";
 import {useDispatch} from "react-redux";
 import {depoGlobalDispatch} from "../../store";
+import {useNavigate} from "react-router-dom";
 
 function Login(){
     const dispatch = useDispatch<depoGlobalDispatch>();
+    const navigate = useNavigate();
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
     const login= ()=>{
-      dispatch(fetchDoLogin({userName: userName, password: password}));
+      dispatch(fetchDoLogin({userName: userName, password: password})).then(()=>{
+          navigate('/');
+      })
     }
     return (
         <div className='hold-transition login-page'>
@@ -72,7 +76,7 @@ function Login(){
                             <a href="forgot-password.html">I forgot my password</a>
                         </p>
                         <p className="mb-0">
-                            <a href="register.html" className="text-center">Register a new membership</a>
+                            <a href="/register" className="text-center">Register a new membership</a>
                         </p>
                     </div>
 
