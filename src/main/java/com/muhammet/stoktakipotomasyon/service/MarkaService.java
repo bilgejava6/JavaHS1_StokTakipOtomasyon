@@ -83,4 +83,8 @@ public class MarkaService extends ServiceManager<Marka,Long> {
         ).findAny();
         return result.isPresent();
     }
+
+    public List<String> findAllByMarkaAd() {
+        return markaRepository.findAllMarkaAdList();
+    }
 }

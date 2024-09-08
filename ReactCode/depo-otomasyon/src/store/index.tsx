@@ -1,6 +1,6 @@
 import {configureStore} from "@reduxjs/toolkit";
 import {
-    authSlice, markaSlice
+    authSlice, markaSlice, modelSlice
 } from './feature';
 import {useSelector} from "react-redux";
 
@@ -8,6 +8,7 @@ const store = configureStore({
     reducer: {
         auth: authSlice,
         marka: markaSlice,
+        model: modelSlice,
     }
 });
 

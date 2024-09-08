@@ -2,6 +2,7 @@ import IMarka from "../../models/IMarka";
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 const initialStateMarka = {
     markaList: [],
+    markaAdList: [],
     isLoding: false,
     isMarkaAdi: false
 }
@@ -69,6 +70,13 @@ export const fetchFindMarka = createAsyncThunk(
     }
 )
 
+
+export const fetchMarkaAdList = createAsyncThunk(
+    'marka/fetchMarkaAdList',
+    async ()=>{
+        return await fetch('http://localhost:9090/marka/get-all-marka-ad').then(data=>data.json());
+    }
+)
 const markaSlice = createSlice({
     name: 'marka',
     initialState: initialStateMarka,
@@ -79,6 +87,9 @@ const markaSlice = createSlice({
         })
         builder.addCase(fetchFindMarka.fulfilled,(state,action)=>{
             state.isMarkaAdi = action.payload.data;
+        })
+        builder.addCase(fetchMarkaAdList.fulfilled,(state,action)=>{
+            state.markaAdList = action.payload.data;
         })
     }
 })

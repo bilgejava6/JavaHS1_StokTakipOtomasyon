@@ -71,4 +71,13 @@ public class MarkaController {
                         .data(result)
                 .build());
     }
+
+    @GetMapping("/get-all-marka-ad")
+    public ResponseEntity<ResponseDto<List<String>>> findAllMarkaad(){
+        return ResponseEntity.ok(ResponseDto.<List<String>>builder()
+                        .code(200)
+                        .message("Tüm marka listesi görüntülendi.")
+                        .data(markaService.findAllByMarkaAd())
+                .build());
+    }
 }

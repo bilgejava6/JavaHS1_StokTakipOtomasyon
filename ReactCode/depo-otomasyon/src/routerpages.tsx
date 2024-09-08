@@ -5,6 +5,7 @@ import Register from "./pages/Register/Register";
 import {useDepoSelector} from "./store";
 import React from "react";
 import Marka from "./pages/Marka/Marka";
+import Model from "./pages/Model/Model";
 function Routerpages(){
     //const token = localStorage.getItem('token');
     const token = sessionStorage.getItem("token");
@@ -16,6 +17,8 @@ function Routerpages(){
                 <Route path='/login' element={<Login />} />
                 <Route path='/register' element={<Register />} />
                 <Route path='/marka-tanimlama' element={isLogin || token!== null ? <Marka /> : <Login /> } />
+                <Route path='/model-tanimlama' element={isLogin || token!== null ? <Model /> : <Login /> } />
+
             </Routes>
         </BrowserRouter>
     );

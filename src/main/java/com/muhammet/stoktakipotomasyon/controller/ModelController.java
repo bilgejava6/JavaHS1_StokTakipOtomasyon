@@ -1,6 +1,7 @@
 package com.muhammet.stoktakipotomasyon.controller;
 
 import com.muhammet.stoktakipotomasyon.dto.request.AddModelRequestDto;
+import com.muhammet.stoktakipotomasyon.dto.request.EditModelRequestDto;
 import com.muhammet.stoktakipotomasyon.dto.response.ResponseDto;
 import com.muhammet.stoktakipotomasyon.entity.Model;
 import com.muhammet.stoktakipotomasyon.service.ModelService;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/model")
 @RequiredArgsConstructor
 @CrossOrigin("*")
 public class ModelController {
@@ -35,4 +36,27 @@ public class ModelController {
                 .build());
     }
 
+    @PostMapping("/edit-model")
+    public ResponseEntity<ResponseDto<Boolean>> editModel(@RequestBody EditModelRequestDto dto){
+        modelService.save(Model.builder()
+                        .id(dto.id())
+                        .markaId(dto.markaId())
+                        .modelAdi(dto.modelAd())
+                .build());
+        return ResponseEntity.ok(ResponseDto.<Boolean>builder()
+                        .data(true)
+                        .message("Kayıt Başarılı olarak güncellendi.")
+                        .code(200)
+                .build());
+    }
+
+    @DeleteMapping("/delete-by-id")
+    public ResponseEntity<ResponseDto<Boolean>> deleteById(Long modelId){
+        modelService.deleteById(modelId);
+        return ResponseEntity.ok(ResponseDto.<Boolean>builder()
+                .data(true)
+                .message("Kayıt Başarılı olarak silindi.")
+                .code(200)
+                .build());
+    }
 }
