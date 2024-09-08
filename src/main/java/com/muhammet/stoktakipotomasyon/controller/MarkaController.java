@@ -61,4 +61,14 @@ public class MarkaController {
                         .code(200)
                 .build());
     }
+
+    @GetMapping("/find-by-marka-ad")
+    public ResponseEntity<ResponseDto<Boolean>> findByMarkaAdi(String markaAdi){
+        Boolean result = markaService.findByMarkaAdi(markaAdi);
+        return ResponseEntity.ok(ResponseDto.<Boolean>builder()
+                        .code(200)
+                        .message("Ok")
+                        .data(result)
+                .build());
+    }
 }

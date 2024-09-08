@@ -2,11 +2,18 @@ import LeftMenu from "../../components/organisms/LeftMenu";
 import IMarka from "../../models/IMarka";
 import {depoGlobalDispatch, useDepoSelector} from "../../store";
 import {useEffect, useState} from "react";
-import {fetchMarkaEdit, fetchMarkaEkle, fetchMarkaListele, fetchMarkaSil} from "../../store/feature/markaSlice";
+import {
+    fetchFindMarka,
+    fetchMarkaEdit,
+    fetchMarkaEkle,
+    fetchMarkaListele,
+    fetchMarkaSil
+} from "../../store/feature/markaSlice";
 import {useDispatch} from "react-redux";
 import swal from "sweetalert";
 function Marka(){
     const dispatch: depoGlobalDispatch = useDispatch();
+    const isMarkaAdi = useDepoSelector(state=> state.marka.isMarkaAdi);
     const [ad,setAd] = useState('');
     const [aciklama,setAciklama] = useState('');
     const [acikAdres,setAcikAdres] = useState('');
@@ -355,8 +362,19 @@ function Marka(){
                                         <div className='card-body'>
                                             <div className='form-group'>
                                                 <label>Marka adı</label>
-                                                <input  value={ad} onChange={evt=> setAd(evt.target.value)} type="text" className='form-control'
+                                                <input  value={ad} onChange={
+                                                    evt=>
+                                                    {
+                                                        setAd(evt.target.value);
+                                                        dispatch(fetchFindMarka(evt.target.value)); // marka var mı sorgula
+                                                    }
+                                                } type="text" className='form-control'
                                                        placeholder='marka adı giriniz.'/>
+                                                {
+                                                    isMarkaAdi &&
+                                                    <label className='text-danger'>* Bu marka zaten kayıtlıdır</label>
+                                                }
+
                                             </div>
                                             <div className='form-group'>
                                                 <label>Aciklama</label>
@@ -387,7 +405,7 @@ function Marka(){
                                                           placeholder='açık adres bilgisini giriniz'/>
                                             </div>
                                             <div className='form-group'>
-                                                <button onClick={addMarka} className='btn btn-block btn-primary'>Kaydet</button>
+                                                <button disabled={isMarkaAdi} onClick={addMarka} className='btn btn-block btn-primary'>Kaydet</button>
                                             </div>
                                         </div>
                                     </div>

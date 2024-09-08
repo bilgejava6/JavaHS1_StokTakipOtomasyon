@@ -20,6 +20,12 @@ public class MarkaService extends ServiceManager<Marka,Long> {
         this.markaRepository = markaRepository;
     }
 
+    public Marka save(Marka marka){
+      Boolean isMarka =  findByMarkaAdi(marka.getAd());
+      if (isMarka) throw new StokTakipException(ErrorType.BAD_REQUEST_MARKA_ADI_ZATEN_KAYITLI);
+      return markaRepository.save(marka);
+    }
+
     /**
      * Marka adı verilen ya da marka adının bir kısmı verilen değer ile arama yapılarak
      * uyan tüm kayıtların id bilgisi dönülür.
@@ -41,5 +47,40 @@ public class MarkaService extends ServiceManager<Marka,Long> {
         marka.setIletisimTel(dto.iletisimTel());
         marka.setYetkili(dto.yetkili());
         markaRepository.save(marka);
+    }
+
+    public Boolean findByMarkaAdi(String markaAdi) {
+        /**
+         * Bu işlem için önerlerim,
+         * 1- Elasticsearch kullanmak en iyisi.
+         * 2- Redis Kullanarak marka adlarının listesini tutmak ve burada arama yapmak.
+         * 3- Veritabanındanki tüm markaların adlarını çekersiniz ve bunun içerisinden sorgulama yaparsınız.
+         * 4- En hantal yöntem olarak direkt DB den kriterlere göre arama yaparak
+         * çözebilirsiniz.
+         *
+         * ViewSonic -> View Sonic
+         * ElasticSearch -> vievsonic
+         */
+        List<String> markaList = markaRepository.findAllMarkaAdList();
+        Optional<String> result = markaList.stream().filter(x->
+                x.equals(markaAdi) ||
+                x.trim().toLowerCase().equals(markaAdi.trim().toLowerCase()) ||
+                x.toLowerCase()
+                        .replaceAll(" ","")
+                        .replace("ş","s")
+                        .replace("ç","c")
+                        .replace("ü","u")
+                        .replace("ğ","g")
+                        .replace("ı","i").equals(
+                                markaAdi.toLowerCase()
+                                        .replaceAll(" ","")
+                                        .replace("ş","s")
+                                        .replace("ç","c")
+                                        .replace("ü","u")
+                                        .replace("ğ","g")
+                                        .replace("ı","i")
+                        )
+        ).findAny();
+        return result.isPresent();
     }
 }
