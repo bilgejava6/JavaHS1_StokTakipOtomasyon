@@ -12,11 +12,14 @@ import {
 import {useDispatch} from "react-redux";
 import swal from "sweetalert";
 import IModel from "../../models/IModel";
-function Marka(){
+import {fetchModelEkle, fetchModelListele} from "../../store/feature/modelSlice";
+import IMarkaAdList from "../../models/IMarkaAdList";
+function Model(){
     const dispatch: depoGlobalDispatch = useDispatch();
     const [ad,setAd] = useState('');
-    const [modelId,setModelId] = useState(0);
-    const markaAdList = useDepoSelector(state=> state.marka.markaAdList);
+    const [markaId,setMarkaId] = useState(0);
+    const markaAdList: IMarkaAdList[] = useDepoSelector(state=> state.marka.markaAdList);
+    const modelList: IModel[] = useDepoSelector(state=> state.model.modelList);
     const [editModel,setEditModel] = useState<IModel>({
         id: 0,
         markaId: 0,
@@ -31,7 +34,27 @@ function Marka(){
      * */
     useEffect(()=>{
         dispatch(fetchMarkaAdList());
+        dispatch(fetchModelListele());
     },[]);
+
+    const modelEkle = ()=>{
+        dispatch(fetchModelEkle({
+            markaId: markaId,
+            modelAdi: ad
+        })).then(()=>{
+            swal('Başarılı','Kaydetme İşlemi başarı ile tamamlandı','success').then(()=>{
+                dispatch(fetchModelListele());
+            })
+        })
+    }
+
+    const modelSil = (modelId: number)=>{
+
+    }
+
+    const modelDuzenle = ()=>{
+
+    }
     return(
         <div className='hold-transition sidebar-mini'>
             <div className="wrapper">
@@ -215,11 +238,11 @@ function Marka(){
                                         <div className='card-body'>
                                             <div className='form-group'>
                                                 <label>Marka Adı</label>
-                                                <select className='form-control'>
+                                                <select onChange={evt=> setMarkaId(parseInt(evt.target.value))} className='form-control'>
                                                     <option>Seçiniz</option>
                                                     {
-                                                        markaAdList.map((ad,index)=> {
-                                                            return <option key={index} value={index}>{ad}</option>
+                                                        markaAdList.map((markaAd,index)=> {
+                                                            return <option key={index} value={markaAd.markaId}>{markaAd.markaAd}</option>
                                                         })
                                                     }
                                                 </select>
@@ -238,7 +261,7 @@ function Marka(){
                                             </div>
 
                                             <div className='form-group'>
-                                                <button className='btn btn-block btn-primary'>Kaydet</button>
+                                                <button onClick={modelEkle} className='btn btn-block btn-primary'>Kaydet</button>
                                             </div>
                                         </div>
                                     </div>
@@ -260,7 +283,30 @@ function Marka(){
                                                         </tr>
                                                     </thead>
                                                     <tbody>
+                                                    {
+                                                        modelList.map((model,index)=>{
+                                                            return <tr key={index}>
+                                                                <td>{index+1}</td>
+                                                                <td>{model.id}</td>
+                                                                <td>{model.markaAdi}</td>
+                                                                <td>{model.modelAdi}</td>
+                                                                <td>
+                                                                    <a onClick={() => {
 
+
+                                                                    }} className='btn bg-danger p-2 m-1'>
+                                                                        <i className="fa-solid fa-eraser fa-lg"></i>
+                                                                    </a>
+                                                                    <a onClick={() => {
+
+                                                                    }} data-toggle='modal' data-target='#edit-modal'
+                                                                       className='btn  bg-warning p-2 m-1'>
+                                                                        <i className="fa-solid fa-pen-to-square fa-lg"></i>
+                                                                    </a>
+                                                                </td>
+                                                            </tr>
+                                                        })
+                                                    }
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -288,4 +334,4 @@ function Marka(){
     );
 }
 
-export default Marka;
+export default Model;

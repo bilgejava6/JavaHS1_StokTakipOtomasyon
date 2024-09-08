@@ -2,6 +2,7 @@ package com.muhammet.stoktakipotomasyon.controller;
 
 import com.muhammet.stoktakipotomasyon.dto.request.AddMarkaRequestDto;
 import com.muhammet.stoktakipotomasyon.dto.request.AddUrunRequestDto;
+import com.muhammet.stoktakipotomasyon.dto.response.MarkaAdListResponseDto;
 import com.muhammet.stoktakipotomasyon.dto.response.ResponseDto;
 import com.muhammet.stoktakipotomasyon.entity.Marka;
 import com.muhammet.stoktakipotomasyon.service.MarkaService;
@@ -73,8 +74,8 @@ public class MarkaController {
     }
 
     @GetMapping("/get-all-marka-ad")
-    public ResponseEntity<ResponseDto<List<String>>> findAllMarkaad(){
-        return ResponseEntity.ok(ResponseDto.<List<String>>builder()
+    public ResponseEntity<ResponseDto<List<MarkaAdListResponseDto>>> findAllMarkaad(){
+        return ResponseEntity.ok(ResponseDto.<List<MarkaAdListResponseDto>>builder()
                         .code(200)
                         .message("Tüm marka listesi görüntülendi.")
                         .data(markaService.findAllByMarkaAd())

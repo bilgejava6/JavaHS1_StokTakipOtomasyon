@@ -2,6 +2,7 @@ package com.muhammet.stoktakipotomasyon.controller;
 
 import com.muhammet.stoktakipotomasyon.dto.request.AddModelRequestDto;
 import com.muhammet.stoktakipotomasyon.dto.request.EditModelRequestDto;
+import com.muhammet.stoktakipotomasyon.dto.response.ModelListResponseDto;
 import com.muhammet.stoktakipotomasyon.dto.response.ResponseDto;
 import com.muhammet.stoktakipotomasyon.entity.Model;
 import com.muhammet.stoktakipotomasyon.service.ModelService;
@@ -28,11 +29,11 @@ public class ModelController {
     }
 
     @GetMapping("/get-all")
-    public ResponseEntity<ResponseDto<List<Model>>> getAll(){
-        return  ResponseEntity.ok(ResponseDto.<List<Model>>builder()
+    public ResponseEntity<ResponseDto<List<ModelListResponseDto>>> getAll(){
+        return  ResponseEntity.ok(ResponseDto.<List<ModelListResponseDto>>builder()
                         .code(200)
                         .message("Ok")
-                        .data(modelService.findAll())
+                        .data(modelService.findAllModel())
                 .build());
     }
 

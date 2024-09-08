@@ -2,13 +2,16 @@ package com.muhammet.stoktakipotomasyon.service;
 
 import com.muhammet.stoktakipotomasyon.dto.request.AddMarkaRequestDto;
 import com.muhammet.stoktakipotomasyon.dto.request.AddUrunRequestDto;
+import com.muhammet.stoktakipotomasyon.dto.response.MarkaAdListResponseDto;
 import com.muhammet.stoktakipotomasyon.entity.Marka;
 import com.muhammet.stoktakipotomasyon.exceptions.ErrorType;
 import com.muhammet.stoktakipotomasyon.exceptions.StokTakipException;
 import com.muhammet.stoktakipotomasyon.repository.MarkaRepository;
 import com.muhammet.stoktakipotomasyon.utility.ServiceManager;
 import org.springframework.stereotype.Service;
+import org.yaml.snakeyaml.error.Mark;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -84,7 +87,25 @@ public class MarkaService extends ServiceManager<Marka,Long> {
         return result.isPresent();
     }
 
-    public List<String> findAllByMarkaAd() {
-        return markaRepository.findAllMarkaAdList();
+    /**
+     * YORUM:
+     * küçük ölçekli uygulamalarda sunucudan tüm datayı çekerek işlem yapmanızda sorun olmayabilir.
+     * ancak çok fazla kayıt olan tabloların findAll ile çekiLmesi sorun yaratacaktır, ayrıca
+     * çok requıest alan uygulamalarda da findAll sorun yaratır. Çünkü DB ye aşırı istek atılmasına
+     * ve CPU, RAM ve I/O kaynaklarının tükenmesine neden olabilir.
+     *
+     */
+    public List<MarkaAdListResponseDto> findAllByMarkaAd() {
+        List<Marka> markaList = markaRepository.findAll();
+        List<MarkaAdListResponseDto> markaAdListResponseDtoList = new ArrayList<>();
+        markaList.forEach(marka -> {
+            markaAdListResponseDtoList.add(
+              new MarkaAdListResponseDto(
+                      marka.getId(),
+                      marka.getAd()
+              )
+            );
+        });
+        return markaAdListResponseDtoList;
     }
 }
