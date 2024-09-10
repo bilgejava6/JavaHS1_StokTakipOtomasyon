@@ -42,7 +42,7 @@ public class ModelController {
         modelService.save(Model.builder()
                         .id(dto.id())
                         .markaId(dto.markaId())
-                        .modelAdi(dto.modelAd())
+                        .modelAdi(dto.modelAdi())
                 .build());
         return ResponseEntity.ok(ResponseDto.<Boolean>builder()
                         .data(true)
@@ -59,5 +59,16 @@ public class ModelController {
                 .message("Kayıt Başarılı olarak silindi.")
                 .code(200)
                 .build());
+    }
+
+    @GetMapping("/get-all-by-marka-id")
+    public ResponseEntity<ResponseDto<List<Model>>> getAllByMarkaId(Long markaId){
+        return ResponseEntity.ok(
+                ResponseDto.<List<Model>>builder()
+                        .code(200)
+                        .message("ok")
+                        .data(modelService.getAllByMarkaId(markaId))
+                        .build()
+        );
     }
 }

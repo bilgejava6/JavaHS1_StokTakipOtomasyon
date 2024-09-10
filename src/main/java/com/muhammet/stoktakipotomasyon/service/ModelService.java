@@ -37,4 +37,8 @@ public class ModelService  extends ServiceManager<Model,Long> {
         });
         return modelListResponseDtoList;
     }
+
+    public List<Model> getAllByMarkaId(Long markaId) {
+        return modelRepository.findAllByMarkaId(markaId);
+    }
 }

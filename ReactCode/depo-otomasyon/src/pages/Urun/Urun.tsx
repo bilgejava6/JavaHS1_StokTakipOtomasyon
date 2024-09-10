@@ -1,95 +1,31 @@
 import LeftMenu from "../../components/organisms/LeftMenu";
-import IMarka from "../../models/IMarka";
 import {depoGlobalDispatch, useDepoSelector} from "../../store";
 import {useEffect, useState} from "react";
-import {
-    fetchFindMarka, fetchMarkaAdList,
-    fetchMarkaEdit,
-    fetchMarkaEkle,
-    fetchMarkaListele,
-    fetchMarkaSil
-} from "../../store/feature/markaSlice";
 import {useDispatch} from "react-redux";
-import swal from "sweetalert";
+import {fetchMarkaListele} from "../../store/feature/markaSlice";
+import IMarka from "../../models/IMarka";
 import IModel from "../../models/IModel";
-import {fetchModelDuzenle, fetchModelEkle, fetchModelListele, fetchModelSil} from "../../store/feature/modelSlice";
-import IMarkaAdList from "../../models/IMarkaAdList";
-function Model(){
-    const dispatch: depoGlobalDispatch = useDispatch();
-    const [ad,setAd] = useState('');
-    const [markaId,setMarkaId] = useState(0);
-    const [editAd,setEditAd] = useState('');
-    const [editMarkaId,setEditMarkaId] = useState(0);
-    const [editId, setEditId] = useState(0);
-    const markaAdList: IMarkaAdList[] = useDepoSelector(state=> state.marka.markaAdList);
-    const modelList: IModel[] = useDepoSelector(state=> state.model.modelList);
-    const [editModel,setEditModel] = useState<IModel>({
-        id: 0,
-        markaId: 0,
-        modelAdi: ''
-    });
-    /**
-     * 1- Model ekleme fetch
-     * 2- Modelleri listeleme fetch
-     * 3- Model düzenleme fetch
-     * 4- model silme fetch
-     * 5- Marka listesini çekecek fetch
-     * */
+import {fetchGetAllModelByMarkaId} from "../../store/feature/modelSlice";
+
+function Urun(){
+    const dispatch = useDispatch<depoGlobalDispatch>();
+    const markaList: IMarka[] = useDepoSelector(state=> state.marka.markaList);
+    const [modelList,setModelList] = useState<IModel[]>([]);
+    /***
+     DİKKAT!!!!
+     modellerin listesi markanın türüne bağlıdır, yani marka seçilir ve ilgili
+     markaya ait modeller listelenir.
+     */
+    const getModelList = (markaId: number)=>{
+        dispatch(fetchGetAllModelByMarkaId(markaId)).then(res=>{
+            setModelList(res.payload.data);
+        })
+    }
+
     useEffect(()=>{
-        dispatch(fetchMarkaAdList());
-        dispatch(fetchModelListele());
+        dispatch(fetchMarkaListele());
     },[]);
-
-    const modelEkle = ()=>{
-        dispatch(fetchModelEkle({
-            markaId: markaId,
-            modelAdi: ad
-        })).then(()=>{
-            swal('Başarılı','Kaydetme İşlemi başarı ile tamamlandı','success').then(()=>{
-                dispatch(fetchModelListele());
-            })
-        })
-    }
-
-    const modelSil = (modelId: number)=>{
-        swal({
-            title: 'Model Silme İşlemi',
-            text: 'Seçtiğiniz kayıt silinecektir. Devam etmek istiyor musunuz?',
-            icon: 'error',
-            buttons:['İptal','Sil'],
-            dangerMode: true
-        }).then(secim=>{
-            if (secim){
-                dispatch(fetchModelSil(modelId)).then(()=>{
-                    dispatch(fetchModelListele());
-                    swal('BİLDİRİM','Kayıt başarı ile silinmiştir.','success')
-                })
-
-            }else{
-                swal('İPTAL','İşlem iptal edildi','success')
-            }
-        })
-    }
-
-    const modelDuzenle = (editModel: IModel)=>{
-        if(editModel.id)
-            setEditId(editModel.id);
-        setEditMarkaId(editModel.markaId);
-        setEditAd(editModel.modelAdi);
-    }
-
-    const modelDuzenleKaydet = ()=>{
-        dispatch(fetchModelDuzenle({
-            id: editId,
-            markaId: editMarkaId,
-            modelAdi: editAd
-        })).then(()=>{
-            swal('DÜZENLEME','Düzenleme işlemi başarı ile gerçekleştirilmiştir.','success').then(()=>{
-                dispatch(fetchModelListele());
-            })
-        })
-    }
-    return(
+    return (
         <div className='hold-transition sidebar-mini'>
             <div className="wrapper">
 
@@ -100,34 +36,7 @@ function Model(){
                                 Model Düzenleme Ekranı
                             </div>
                             <div className='modal-body'>
-                                <div className='form-group'>
-                                    <label>Marka Adı</label>
-                                    <select value={editMarkaId}
-                                            onChange={
-                                        evt => setEditMarkaId(parseInt(evt.target.value))}
-                                            className='form-control'>
-                                        <option>Seçiniz</option>
-                                        {
-                                            markaAdList.map((markaAd, index) => {
-                                                return <option key={index}
-                                                               value={markaAd.markaId}>{markaAd.markaAd}</option>
-                                            })
-                                        }
-                                    </select>
-                                </div>
-                                <div className='form-group'>
-                                    <label>Model adı</label>
-                                    <input value={editAd} onChange={
-                                        evt => {
-                                            setEditAd(evt.target.value);
-                                        }
-                                    } type="text" className='form-control'
-                                           placeholder='model adı giriniz.'/>
 
-                                </div>
-                                <div className='form-group'>
-                                    <button onClick={modelDuzenleKaydet} data-dismiss='modal' className='btn btn-block btn-primary'>Düzenle & Kaydet</button>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -267,7 +176,7 @@ function Model(){
                     </ul>
                 </nav>
 
-                <LeftMenu />
+                <LeftMenu/>
 
                 <div className="content-wrapper">
 
@@ -275,7 +184,7 @@ function Model(){
                         <div className="container-fluid">
                             <div className="row mb-2">
                                 <div className="col-sm-6">
-                                    <h1 className="m-0">Model Ekleme İşlemleri</h1>
+                                    <h1 className="m-0">Ürün Ekleme İşlemleri</h1>
                                 </div>
 
 
@@ -289,87 +198,126 @@ function Model(){
                     <div className="content">
                         <div className="container-fluid">
                             <div className="row">
-                                <section className='col-lg-4'>
+                                <section className='col-lg-12'>
                                     <div className='card'>
                                         <div className="card-header">
                                             <div className='card-title'>
-                                                Model işlemleri formu
+                                                Ürün işlemleri formu
                                             </div>
                                         </div>
                                         <div className='card-body'>
-                                            <div className='form-group'>
-                                                <label>Marka Adı</label>
-                                                <select onChange={evt=> setMarkaId(parseInt(evt.target.value))} className='form-control'>
-                                                    <option>Seçiniz</option>
-                                                    {
-                                                        markaAdList.map((markaAd,index)=> {
-                                                            return <option key={index} value={markaAd.markaId}>{markaAd.markaAd}</option>
-                                                        })
-                                                    }
-                                                </select>
+                                            <div className='row'>
+                                                <div className="col-4">
+                                                    <div className='form-group'>
+                                                        <label>Marka Adı</label>
+                                                        <select
+                                                            onChange={
+                                                            evt=> getModelList(parseInt(evt.target.value))
+                                                        }
+                                                            className='form-control'>
+                                                            <option>Seçiniz</option>
+                                                            {
+                                                                markaList.map((marka,index)=>{
+                                                                    return <option key={index} value={marka.id}>{marka.ad}</option>
+                                                                })
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                    <div className='form-group'>
+                                                        <label>Model Adı</label>
+                                                        <select className='form-control'>
+                                                            <option>Seçiniz</option>
+                                                            {
+                                                                modelList.map((model,index)=>{
+                                                                    return <option key={index} value={model.id}>{model.modelAdi}</option>
+                                                                })
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                    <div className="form-group">
+                                                        <label>Ürün Adı</label>
+                                                        <input type="text" className="form-control"/>
+                                                    </div>
+                                                    <div className="form-group">
+                                                        <label>Açıklama</label>
+                                                        <textarea rows={4} className="form-control"/>
+                                                    </div>
+                                                    <div className="form-group">
+                                                        <label>Ürün Stok Kodu</label>
+                                                        <input type="text" className="form-control"/>
+                                                    </div>
+                                                </div>
+                                                <div className="col-4">
+                                                    <div className="form-group">
+                                                        <label>Ürün Barkodu</label>
+                                                        <input type="text" className="form-control"/>
+                                                    </div>
+                                                    <div className="form-group">
+                                                        <label>Ürün Fiyatı</label>
+                                                        <input type="text" className="form-control"/>
+                                                    </div>
+                                                    <div className="form-group">
+                                                        <label>Ürün Kdv</label>
+                                                        <input type="text" className="form-control"/>
+                                                    </div>
+                                                    <div className="form-group">
+                                                        <label>Ürün Satış Fiyatı</label>
+                                                        <input type="text" className="form-control"/>
+                                                    </div>
+                                                    <div className="form-group">
+                                                        <label>Ürün Birimi</label>
+                                                        <select className='form-control'>
+                                                            <option>Seçiniz</option>
+                                                        </select>
+                                                    </div>
+                                                    <div className="form-group">
+                                                        <label>Ürün Stok Adedi</label>
+                                                        <input type="text" className="form-control"/>
+                                                    </div>
+                                                </div>
+                                                <div className="col-4 align-content-center">
+                                                    <div className="form-group text-center">
+                                                        <img className='rounded-circle' width='70%' height='70%' src="https://picsum.photos/200/200" alt=""/>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div className='form-group'>
-                                                <label>Model adı</label>
-                                                <input  value={ad} onChange={
-                                                    evt=>
-                                                    {
-                                                        setAd(evt.target.value);
-
-                                                    }
-                                                } type="text" className='form-control'
-                                                       placeholder='model adı giriniz.'/>
-
-                                            </div>
-                                            <div className='form-group'>
-                                                <button onClick={modelEkle} className='btn btn-block btn-primary'>Kaydet</button>
+                                            <div className="row">
+                                                <div className="col-12">
+                                                    <div className='form-group'>
+                                                    <button
+                                                            className='btn btn-block btn-primary'>Kaydet
+                                                        </button>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </section>
-                                <section className='col-lg-8'>
-                                    <div className='card'>
-                                            <div className='card-header'>
-                                                <div className='card-title'>Model listesi tablosu</div>
-                                            </div>
-                                            <div className='card-body'>
-                                                <table className='table table-hover table-bordered'>
-                                                    <thead className='bg-gradient-gray-dark'>
-                                                        <tr>
-                                                            <td>No</td>
-                                                            <th>M.Id</th>
-                                                            <th>Marka Adı</th>
-                                                            <th>Model Adı</th>
-                                                            <th>İşlemler</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    {
-                                                        modelList.map((model,index)=>{
-                                                            return <tr key={index}>
-                                                                <td>{index+1}</td>
-                                                                <td>{model.id}</td>
-                                                                <td>{model.markaAdi}</td>
-                                                                <td>{model.modelAdi}</td>
-                                                                <td>
-                                                                    <a onClick={() => {
-                                                                        if(model.id)
-                                                                            modelSil(model.id)
-                                                                    }} className='btn bg-danger p-2 m-1'>
-                                                                        <i className="fa-solid fa-eraser fa-lg"></i>
-                                                                    </a>
-                                                                    <a onClick={() => {
-                                                                        modelDuzenle(model);
-                                                                    }} data-toggle='modal' data-target='#edit-modal'
-                                                                       className='btn  bg-warning p-2 m-1'>
-                                                                        <i className="fa-solid fa-pen-to-square fa-lg"></i>
-                                                                    </a>
-                                                                </td>
-                                                            </tr>
-                                                        })
-                                                    }
-                                                    </tbody>
-                                                </table>
-                                            </div>
+
+                                <section className='col-lg-12'>
+                                <div className='card'>
+                                        <div className='card-header'>
+                                            <div className='card-title'>Ürün listesi tablosu</div>
+                                        </div>
+                                        <div className='card-body'>
+                                            <table className='table table-hover table-bordered'>
+                                                <thead className='bg-gradient-gray-dark'>
+                                                <tr>
+                                                    <td>Id</td>
+                                                    <th>Marka</th>
+                                                    <th>Model</th>
+                                                    <th>Ürün Adı</th>
+                                                    <th>Fiyat</th>
+                                                    <th>Stok</th>
+                                                    <td>Resim</td>
+                                                    <th>İşlemler</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </section>
 
@@ -391,7 +339,7 @@ function Model(){
                 </footer>
             </div>
         </div>
-    );
+    )
 }
 
-export default Model;
+export default Urun;

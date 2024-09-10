@@ -35,7 +35,7 @@ export const fetchModelDuzenle = createAsyncThunk(
 })
 export const fetchModelSil = createAsyncThunk(
     'model/fetchModelSil',async (modelId: number)=>{
-        const response = fetch('http://localhost:9090/model/delete-by-id?modelId'+modelId,{
+        const response = fetch('http://localhost:9090/model/delete-by-id?modelId='+modelId,{
             method: 'DELETE',
             headers:{
                 'Content-Type': 'application/json'
@@ -44,6 +44,14 @@ export const fetchModelSil = createAsyncThunk(
         return response;
 
 })
+export const fetchGetAllModelByMarkaId = createAsyncThunk(
+    'model/fetchGetAllModelByMarkaId',
+    async (markaId: number)=>{
+        return await fetch('http://localhost:9090/model/get-all-by-marka-id?markaId='+markaId)
+            .then(data=> data.json());
+    }
+)
+
 const modelSlice = createSlice({
     name: 'model',
     initialState: initialStateModel,

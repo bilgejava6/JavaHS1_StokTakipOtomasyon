@@ -1,4 +1,4 @@
 package com.muhammet.stoktakipotomasyon.dto.request;
 
-public record EditModelRequestDto(Long id, Long markaId, String modelAd) {
+public record EditModelRequestDto(Long id, Long markaId, String modelAdi) {
 }
